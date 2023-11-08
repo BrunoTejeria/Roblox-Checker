@@ -48,14 +48,20 @@ def main():
 
     founded = np.array([])
 
+
+    # Buscar si los usuarios existen
     for user in text:
       # sacar '\n'
       username = user.split(":")[0]
       url = f"https://www.roblox.com/user.aspx?username={username}"
       response = requests.get(url)
+
+      # Si el código de respuesta es 200, entonces guardar el user
       if response.status_code == 200:
         np.append(founded, user)
         print(Fore.GREEN +f"Found {username}")
+
+  # Escribir users en archivo de salida
   with open(RESULT_FILE, "w") as f:
     for user in founded:
       print(user)
