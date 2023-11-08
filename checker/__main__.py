@@ -2,7 +2,9 @@ import numpy as np
 import time
 import json
 import requests
-import colorama
+from colorama import (
+  Fore
+)
 
 """def open_file(file: str, mode: str ="r", data: list = None, json: bool = False):
   if mode == "r":
