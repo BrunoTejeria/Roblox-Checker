@@ -16,24 +16,20 @@ def request(user: str, pbar: tqdm.tqdm = None):
         username = user.split(":")[0]
         url = f"https://www.roblox.com/user.aspx?username={username}"
         response = requests.get(url, timeout=5)
-        pbar.update(1)
+        
 
         # Si el código de respuesta es 200, entonces guardar el user
         if response.status_code == 200:
             print(Fore.GREEN + f"Found {username}")
+            pbar.update(1)
             return user
         else:
           print(Fore.RED + f"Not found {username}")
+          pbar.update(1)
           return None
+        
     except Exception as e:
         return None
-
-def hacer_solicitud(args):
-    url, pbar = args
-    response = requests.get(url)
-    # Aquí puedes procesar la respuesta según tus necesidades
-    pbar.update(1)
-    print(f"Solicitud completada: True | {url}")
 
 def main():
     TEXT_FILE: str = f"./text_files/text.txt"
@@ -47,27 +43,23 @@ def main():
     founded = []
 
     # Buscar si los usuarios existen
-    with tqdm.tqdm(total=len(usernames)) as pbar:
-        with concurrent.futures.ThreadPoolExecutor() as exe:
-            resultados = list(exe.map(request, usernames))
+    with open(RESULT_FILE, "w") as f:
+        with tqdm.tqdm(total=len(usernames), ncols=64, bar_format='{desc}: {percentage:3.0f}% | {n_fmt}/{total_fmt} [{elapsed}<{remaining} | ', colour='red') as pbar:
+
+            for user in usernames:
+                req = request(user, pbar)
+                founded.append(req)
+                if req != None:
+                    f.write(req + "\n")
 
             for i in resultados:
                 if i is not None:
                     founded.append(i)
+            
 
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            # Utiliza executor.submit para realizar solicitudes en paralelo
-            futures = [executor.submit(hacer_solicitud, (url, pbar)) for url in usernames]
 
-            # Espera a que todas las solicitudes se completen
-            concurrent.futures.wait(futures)
 
-    print(founded)
-
-    # Escribir users en archivo de salida
-    with open(RESULT_FILE, "w") as f:
-        for user in founded:
-            f.write(user)
+        print(founded)
 
 if __name__ == "__main__":
     main()
