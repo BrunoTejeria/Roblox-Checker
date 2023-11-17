@@ -27,7 +27,8 @@ def get_favorite_games(user_id: str):
         print(data)
         if data in search:
             print(f"Found: {data}")
-            results.append(data)
+            results = np.append(results, data)
+    return results
 
 
 
@@ -43,37 +44,43 @@ def read_config():
         return json.load(f)
 
 def request(user: str, pbar: tqdm.tqdm = None):
-    try:
+    #try:
 
-        print(Fore.LIGHTYELLOW_EX + "\n\n" + "#" * 64 + "\n")
-        # Dividir el user del password
-        username = user.split(":")[0]
-        url = f"https://www.roblox.com/user.aspx?username={username}"
+    print(Fore.LIGHTYELLOW_EX + "\n\n" + "#" * 64 + "\n")
+    # Dividir el user del password
+    username = user.split(":")[0]
+    url = f"https://www.roblox.com/user.aspx?username={username}"
 
-        response = requests.get(url)
+    response = requests.get(url)
 
-        # Si el código de respuesta es 200, entonces guardar el user
-        if response.status_code == 200:
-            pbar.update(1)
+    # Si el código de respuesta es 200, entonces guardar el user
+    if response.status_code == 200:
+        pbar.update(1)
 
-            # Obtener el user id
-            user_id = response.url.split("users/")[1].split("/")[0]
-            favorites = get_favorite_games(user_id)
+        # Obtener el user id
+        user_id = response.url.split("users/")[1].split("/")[0]
+        favorites = get_favorite_games(user_id)
 
-            if "" in favorites and "" in favorites:
-                print(Fore.GREEN + f"Found game {user + " | Adopt-me, Islands"}")
-                return [user + " | Adopt-me, Islands", True]
-            else:
-                print(Fore.RED + f"Not found game {user}")
-                return [user, False]
+        if "https://www.roblox.com/games/4872321990/Islands" in favorites and "https://www.roblox.com/games/920587237/Adopt-Me" in favorites:
+            print(Fore.BLUE + f"Found game {user + " | Adopt-me, Islands"}")
+            return [user + " | Adopt-me, Islands", True]
+        elif "https://www.roblox.com/games/920587237/Adopt-Me" in favorites:
+            print(Fore.BLUE + f"Found game {user + " | Adopt-me"}")
+            return [user + " | Adopt-me", True]
+        elif "https://www.roblox.com/games/4872321990/Islands" in favorites:
+            print(Fore.BLUE + f"Found game {user + " | Islands"}")
+            return [user + " | Islands", True]
         else:
-            print(Fore.RED + f"Not found {user}")
-            pbar.update(1)
-            return None
-
-    except Exception as e:
-        print(e)
+            print(Fore.RED + f"Not found game {user}")
+            return [user, False]
+    else:
+        print(Fore.RED + f"Not found {user}")
+        pbar.update(1)
         return None
+
+    #except Exception as e:
+        #print(e)
+        #return None
 
 def main():
     TEXT_FILE: str = f"./text_files/text.txt"
@@ -96,7 +103,7 @@ def main():
                 founded.append(req)
                 if req is not None:
                     if req[1] == True:
-                        f.write(req + "\n")
+                        f.write(req[0] + "\n")
 
 
 if __name__ == "__main__":
