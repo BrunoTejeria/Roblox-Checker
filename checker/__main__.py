@@ -58,13 +58,13 @@ def request(user: str, pbar: tqdm.tqdm = None):
 
             if "https://www.roblox.com/games/4872321990/Islands" in favorites and "https://www.roblox.com/games/920587237/Adopt-Me" in favorites:
                 print(Fore.BLUE + f"Found game {user + " | Adopt-me, Islands"}")
-                return [user + " | Adopt-me, Islands", True]
+                return [user, True, "adopt-me", "islands"]
             elif "https://www.roblox.com/games/920587237/Adopt-Me" in favorites:
                 print(Fore.BLUE + f"Found game {user + " | Adopt-me"}")
-                return [user + " | Adopt-me", True]
+                return [use, True, "adopt-me"]
             elif "https://www.roblox.com/games/4872321990/Islands" in favorites:
                 print(Fore.BLUE + f"Found game {user + " | Islands"}")
-                return [user + " | Islands", True]
+                return [user, True, "islands"]
             else:
                 print(Fore.RED + f"Not found game {user}")
                 return [user, False]
@@ -79,7 +79,9 @@ def request(user: str, pbar: tqdm.tqdm = None):
 
 def main():
     TEXT_FILE: str = f"./text_files/text.txt"
-    RESULT_FILE: str = f"./results/r.txt"
+    RESULT_FILE_ISLANDS: str = f"./results/Islands.txt"
+    RESULT_FILE_ADOPT_ME: str = f"./results/Adopt-me.txt"
+    RESULT_FILE: str = f"./results/All.txt"
 
     t1 = time.time()
     # Leer archivo de texto
@@ -90,15 +92,22 @@ def main():
     founded = []
 
     # Buscar si los usuarios existen
-    with open(RESULT_FILE, "a") as f:
-        with tqdm.tqdm(total=len(usernames), ncols=64, bar_format='{desc}: {percentage:3.0f}% | {n_fmt}/{total_fmt} [{elapsed}<{remaining} | ', colour='red') as pbar:
+    with open(RESULT_FILE_ADOPT_ME, "a") as adopt_me:
+        with open(RESULT_FILE_ISLANDS, "a") as islands:
+            with open(RESULT_FILE, "a") as f:
+                with tqdm.tqdm(total=len(usernames), ncols=64, bar_format='{desc}: {percentage:3.0f}% | {n_fmt}/{total_fmt} [{elapsed}<{remaining} | ', colour='red') as pbar:
 
-            for user in usernames:
-                req = request(user, pbar)
-                founded.append(req)
-                if req is not None:
-                    if req[1] == True:
-                        f.write(req[0] + "\n")
+                    for user in usernames:
+                        req = request(user, pbar)
+
+                        if req is not None:
+                            if req[1] == True:
+                                if req[2] == "adopt-me":
+                                    adopt_me.write(req[0])
+                                elif req[2] == "islands":
+                                    islands.write(req[0])
+                                else:
+                                    f.write(req[0])
 
 
 if __name__ == "__main__":
