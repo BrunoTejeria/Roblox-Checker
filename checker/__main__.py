@@ -89,7 +89,9 @@ def main():
         usernames = f.readlines()
     t2 = time.time()
     print(f"Time to read file: {t2 - t1}")
-    founded = []
+    founded_all = []
+    founded_islands = []
+    founded_adopt_me = []
 
     # Buscar si los usuarios existen
     with open(RESULT_FILE_ADOPT_ME, "a") as adopt_me:
@@ -103,10 +105,13 @@ def main():
                         if req is not None:
                             if req[1] == True:
                                 if req[2] == "adopt-me":
+                                    fondeed_adopt_me.append(req[0])
                                     adopt_me.write(req[0])
                                 elif req[2] == "islands":
+                                    founded_islands.append(req[0])
                                     islands.write(req[0])
                                 else:
+                                    founded_all.append(req[0])
                                     f.write(req[0])
 
 
