@@ -6,20 +6,6 @@ import tqdm
 import bs4 as bs
 from colorama import Fore
 
-def get_favorite_games(user_id: str):
-    results = np.array([])
-    search = ["https://www.roblox.com/games/4872321990/Islands", "https://www.roblox.com/games/920587237/Adopt-Me"]
-    url = f"https://www.roblox.com/users/favorites/list-json?assetTypeId=9&itemsPerPage=999&pageNumber=1&userId={user_id}"
-
-    favorites = requests.get(url).json()
-
-    index = favorites["Data"]["TotalItems"] - 3
-
-    for i in range(index):
-        data = favorites["Data"]["Items"][i]["Item"]["AbsoluteUrl"]
-        if data in search:
-            results = np.append(results, data)
-    return results
 
 
 
@@ -30,19 +16,23 @@ def get_favorite_games(user_id: str):
 
 
 
-def read_config():
+
+
+"""def read_config():
     with open("checker/config.json", "r") as f:
-        return json.load(f)
+        return json.load(f)"""
 
 def request(user: str, pbar: tqdm.tqdm = None):
     try:
 
         print(Fore.LIGHTYELLOW_EX + "\n\n" + "#" * 64 + "\n")
         # Dividir el user del password
-        username = user.split(":")[0]
-        url = f"https://www.roblox.com/user.aspx?username={username}"
+        username: str = user.split(":")[0]
 
-        response = requests.get(url)
+        URL_LOGIN: str = f"https://www.roblox.com/user.aspx?username={username}"
+
+
+        response = requests.get(URL_LOGIN)
 
         # Si el código de respuesta es 200, entonces guardar el user
         if response.status_code == 200:
@@ -73,6 +63,25 @@ def request(user: str, pbar: tqdm.tqdm = None):
     except Exception as e:
         print(e)
         return None
+
+def get_favorite_games(user_id: str):
+
+    URL_FAVORITES: str = f"https://www.roblox.com/users/favorites/list-json?assetTypeId=9&itemsPerPage=999&pageNumber=1&userId={user_id}"
+    results = np.array([])
+    search = ["https://www.roblox.com/games/4872321990/Islands", "https://www.roblox.com/games/920587237/Adopt-Me"]
+
+    favorites: dict = requests.get(URL_FAVORITES).json()
+
+    index: dict = favorites["Data"]["TotalItems"] - 3
+
+    for i in range(index):
+        data: dict = favorites["Data"]["Items"][i]["Item"]["AbsoluteUrl"]
+        if data in search:
+            results = np.append(results, data)
+    return results
+
+
+
 
 def main():
     TEXT_FILE: str = f"./text_files/text.txt"
