@@ -6,9 +6,6 @@ import tqdm
 import bs4 as bs
 from colorama import Fore
 
-import concurrent.futures
-
-
 def get_favorite_games(user_id: str):
     results = np.array([])
     search = ["https://www.roblox.com/games/4872321990/Islands", "https://www.roblox.com/games/920587237/Adopt-Me"]
@@ -83,15 +80,18 @@ def main():
     RESULT_FILE_ADOPT_ME: str = f"./results/Adopt-me.txt"
     RESULT_FILE: str = f"./results/All.txt"
 
-    t1 = time.time()
+    #t1 = time.time()
+
     # Leer archivo de texto
     with open(TEXT_FILE, "r") as f:
         usernames = f.readlines()
-    t2 = time.time()
-    print(f"Time to read file: {t2 - t1}")
-    founded_all = []
-    founded_islands = []
-    founded_adopt_me = []
+
+    #t2 = time.time()
+    #print(f"Time to read file: {t2 - t1}")
+
+    founded_all = np.array([])
+    founded_islands = np.array([])
+    founded_adopt_me = np.array([])
 
     # Buscar si los usuarios existen
     with open(RESULT_FILE_ADOPT_ME, "a") as adopt_me:
@@ -105,13 +105,13 @@ def main():
                         if req is not None:
                             if req[1] == True:
                                 if req[2] == "adopt-me":
-                                    fondeed_adopt_me.append(req[0])
+                                    np.append(founded_adopt_me, req[0])
                                     adopt_me.write(req[0])
                                 elif req[2] == "islands":
-                                    founded_islands.append(req[0])
+                                    np.append(founded_islands, req[0])
                                     islands.write(req[0])
                                 else:
-                                    founded_all.append(req[0])
+                                    np.append(founded_all, req[0])
                                     f.write(req[0])
 
 
